@@ -22,13 +22,13 @@ public class News implements Serializable {
     @Id
     @SequenceGenerator(name = "news_id_seq", sequenceName = "news_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_id_seq")
-    @Column(name = "id", insertable = false, nullable = false)
+    @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "headline")
+    @Column(name = "headline", columnDefinition="text")
     String headline;
 
-    @Column(name = "content_text")
+    @Column(name = "content_text", columnDefinition="text")
     String content;
 
     @Column(name = "post_date")
