@@ -30,8 +30,6 @@ spring.jpa.hibernate.ddl-auto=update
 
 ## Использование
 
-'Host': http://localhost:8050
+**Context:** http://localhost:8050/news-seacher
 
-'Context': /news-seacher
-
-'Swagger UI': http://localhost:8050/news-seacher/swagger-ui/index.html
+**Swagger UI:** http://localhost:8050/news-seacher/swagger-ui/index.html
