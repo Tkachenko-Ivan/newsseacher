@@ -2,10 +2,10 @@
 
 Пример CRUD контроллера, взаимодействующего с поисковиковым движком Manticore Search
 
-* [Запуск](#Header1);
+* [Запуск](#Header1)
   * [База Данных - *PostgreSQL*](#Header1.1)
   * [Поисковик - *Manticore Searh*](#Header1.2)
-* [Использование](#Header1)
+* [Использование](#Header2)
 
 ## <a name="Header1"></a>Запуск
 
