@@ -32,7 +32,7 @@ spring.jpa.hibernate.ddl-auto=update
 
 ### Поисковик - *Manticore Searh*
 
-Приложение взаимодействует с поисковой платформой, разверните и её из докер контейнера:
+Приложение взаимодействует с поисковой платформой, разверните и её из докер контейнера [docker-compose.yaml](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-docker-compose-yaml):
 
 ```yaml
 version: '3.1'
@@ -59,7 +59,7 @@ services:
       - ./manticore.conf:/etc/manticoresearch/manticore.conf
 ```
 
-Обратите внимание на примонтированную папку `manticore` и конфигурацию `manticore.conf`.
+Обратите внимание на примонтированную папку `manticore` и конфигурацию [manticore.conf](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-manticore-simple-conf).
 
 
 ## Использование
