@@ -2,6 +2,7 @@ package github.velon.newsseacher.controller;
 
 import github.velon.newsseacher.entity.News;
 import github.velon.newsseacher.service.NewsService;
+import java.util.List;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +45,10 @@ public class NewsController {
     @DeleteMapping(value = "/{id}")
     public void deleteNews(@PathVariable Long id) throws Exception {
         service.deleteNews(id);
+    }
+
+    @GetMapping(value = "find")
+    public List<News> find(@RequestParam String text) {
+        return service.find(text);
     }
 }
