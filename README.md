@@ -5,6 +5,7 @@
 * [Запуск](#Header1)
   * [База Данных - *PostgreSQL*](#Header1.1)
   * [Поисковик - *Manticore Searh*](#Header1.2)
+  * [Индексирование](#Header1.3)
 * [Использование](#Header2)
 
 ## <a name="Header1"></a>Запуск
@@ -66,10 +67,18 @@ services:
 
 Обратите внимание на примонтированную папку `manticore` и конфигурацию [manticore.conf](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-manticore-simple-conf).
 
+### <a name="Header1.3"></a>Индексирование
+
 Наполните БД и постройте поисковый индекс:
 
 ```bash
 docker exec manticore gosu manticore indexer --all --rotate
+```
+
+Чтобы индексирование проходило по расписанию, можно использовать crontab:
+
+```
+0 1 * * * docker exec -t manticore gosu manticore indexer --all --rotate  >> /var/log/manticore_indexer.log 2>&1
 ```
 
 ## <a name="Header2"></a>Использование
