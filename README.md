@@ -66,6 +66,11 @@ services:
 
 Обратите внимание на примонтированную папку `manticore` и конфигурацию [manticore.conf](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-manticore-simple-conf).
 
+Наполните БД и постройте поисковый индекс:
+
+```bash
+docker exec manticore gosu manticore indexer --all --rotate
+```
 
 ## <a name="Header2"></a>Использование
 
