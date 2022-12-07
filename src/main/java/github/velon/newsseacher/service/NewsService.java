@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,30 +45,29 @@ public class NewsService {
         return newsRepository.findById(id);
     }
 
+    @Transactional
     public News addNews(News news) {
         // Сохранение в хранилище
         News n = newsRepository.save(news);
-
         // Вставка в поисковый индекс
-        try {
-            String sql = """
-                     INSERT INTO news_rt (id, find_headline, find_content_text, headline, content_text, post_date)
-                     VALUES (?,?,?,?,?,?)      
-                     """;
-            Long seconds = null;
-            if (n.getPostDate() != null) {
-                seconds = n.getPostDate().toEpochSecond(LocalTime.NOON, ZoneOffset.MIN);
-            }
-            manticoreJdbcTemplate.update(sql, n.getId(), n.getHeadline(), n.getContent(), n.getHeadline(), n.getContent(), seconds);
-        } catch (DataAccessException ex) {
-            logger.error(ex.getMessage());
-        }
+        insertToIndex(n);
+
         return n;
     }
 
+    @Transactional
     public News updateNews(Long id, News news) {
         news.setId(id);
-        return newsRepository.save(news);
+        News n = newsRepository.save(news);
+
+        if (containsInIndex(id)) {
+            updateInIndex(n);
+        } else {
+            // Вставка
+            insertToIndex(n);
+        }
+
+        return n;
     }
 
     public void deleteNews(Long id) {
@@ -99,5 +99,55 @@ public class NewsService {
             }
         }, searchText);
         return result;
+    }
+
+    /**
+     * Вставляем данные в Real-Time индекс
+     *
+     * @param news вставляемые данные
+     */
+    private void insertToIndex(News news) {
+        try {
+            String sql = """
+                     INSERT INTO news_rt (id, find_headline, find_content_text, headline, content_text, post_date)
+                     VALUES (?,?,?,?,?,?)      
+                     """;
+            Long seconds = null;
+            if (news.getPostDate() != null) {
+                seconds = news.getPostDate().toEpochSecond(LocalTime.NOON, ZoneOffset.MIN);
+            }
+            manticoreJdbcTemplate.update(sql, news.getId(), news.getHeadline(), news.getContent(), news.getHeadline(), news.getContent(), seconds);
+        } catch (DataAccessException ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+
+    private void updateInIndex(News news) {
+        try {
+            String sql = """
+                     UPDATE news_rt
+                     SET find_headline = ?, find_content_text = ?, headline = ?, content_text = ?, post_date = ?
+                     WHERE id = ?   
+                     """;
+            Long seconds = null;
+            if (news.getPostDate() != null) {
+                seconds = news.getPostDate().toEpochSecond(LocalTime.NOON, ZoneOffset.MIN);
+            }
+            manticoreJdbcTemplate.update(sql, news.getHeadline(), news.getContent(), news.getHeadline(), news.getContent(), seconds, news.getId());
+        } catch (DataAccessException ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+
+    /**
+     * Проверка наличия данных в Real-Time индексе
+     *
+     * @param id идентификатор записи
+     * @return
+     */
+    private boolean containsInIndex(long id) {
+        String sql = "SELECT count(*) FROM news_rt WHERE id = ?";
+        Integer count = manticoreJdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count > 0;
     }
 }
