@@ -61,11 +61,9 @@ public class NewsService {
         News n = newsRepository.save(news);
 
         if (containsInIndex(id)) {
-            updateInIndex(n);
-        } else {
-            // Вставка
-            insertToIndex(n);
+            deleteFromIndex(id);
         }
+        insertToIndex(n);
 
         return n;
     }
@@ -122,18 +120,10 @@ public class NewsService {
         }
     }
 
-    private void updateInIndex(News news) {
+    private void deleteFromIndex(long id) {
         try {
-            String sql = """
-                     UPDATE news_rt
-                     SET find_headline = ?, find_content_text = ?, headline = ?, content_text = ?, post_date = ?
-                     WHERE id = ?   
-                     """;
-            Long seconds = null;
-            if (news.getPostDate() != null) {
-                seconds = news.getPostDate().toEpochSecond(LocalTime.NOON, ZoneOffset.MIN);
-            }
-            manticoreJdbcTemplate.update(sql, news.getHeadline(), news.getContent(), news.getHeadline(), news.getContent(), seconds, news.getId());
+            String sql = "DELETE FROM news_sql WHERE id = ?";
+            manticoreJdbcTemplate.update(sql, id);
         } catch (DataAccessException ex) {
             logger.error(ex.getMessage());
         }
