@@ -68,16 +68,26 @@ public class NewsService {
         }
         insertToIndex(INDEXES.NEWS_RT, n, true);
 
+        // Проверка индекса "перекрытия"
+        if (!containsInIndex(INDEXES.NEWS_DELETE, id)
+                && containsInIndex(INDEXES.NEWS_SQL, id)) {
+            // Если запись ещё не перекрыта, и перекрывать её нужно...
+            News oldNews = getByIndex(INDEXES.NEWS_SQL, id);
+            insertToIndex(INDEXES.NEWS_DELETE, oldNews, false);
+        }
+
         return n;
     }
 
+    @Transactional
     public void deleteNews(Long id) {
         newsRepository.deleteById(id);
 
         // Удалить из временного индекса
         deleteFromIndex(INDEXES.NEWS_RT, id);
 
-        if (containsInIndex(INDEXES.NEWS_SQL, id)) {
+        if (!containsInIndex(INDEXES.NEWS_DELETE, id)
+                && containsInIndex(INDEXES.NEWS_SQL, id)) {
             // Найти в основном индексе
             News news = getByIndex(INDEXES.NEWS_SQL, id);
             // Перекрыть запись
