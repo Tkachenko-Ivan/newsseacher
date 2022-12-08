@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,7 @@ public class News implements Serializable {
 
     @Column(name = "post_date")
     LocalDate postDate;
+    
+    @Transient
+    boolean active;
 }
