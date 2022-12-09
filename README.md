@@ -65,7 +65,7 @@ services:
       - ./manticore.conf:/etc/manticoresearch/manticore.conf
 ```
 
-Обратите внимание на примонтированную папку `manticore` и конфигурацию [manticore.conf](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-manticore-simple-conf).
+Обратите внимание на примонтированную папку `manticore` и конфигурацию [manticore.conf](https://gist.github.com/Tkachenko-Ivan/9c8f8b5f98c80f902905b618878486ad#file-manticore-realtime-conf).
 
 ### <a name="Header1.3"></a>Индексирование
 
